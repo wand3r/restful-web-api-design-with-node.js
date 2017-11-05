@@ -1,8 +1,6 @@
 import * as http from "http";
 import { RequestHandler } from "./http-types";
 
-const port = 8180;
-
 const plainTextResponse = (text: string) => (response: http.ServerResponse) => {
   response.writeHead(200, {
     "Content-Type": "text/plain",
@@ -23,7 +21,7 @@ const handleBadRequest = (res: http.ServerResponse) => {
   res.end("Bad request\n");
 };
 
-const handleRequest: RequestHandler = (req, res) => {
+export const handleRequest: RequestHandler = (req, res) => {
   switch (req.method) {
     case "GET":
       handleGetRequest(res);
@@ -46,7 +44,3 @@ const handleRequest: RequestHandler = (req, res) => {
   }
   console.log("Request processing ended");
 };
-
-http.createServer(handleRequest).listen(port, "localhost");
-
-console.log("Started Node.js http server at http://localhost:" + port);
