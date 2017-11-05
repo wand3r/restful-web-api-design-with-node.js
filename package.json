@@ -1,0 +1,33 @@
+{
+  "name": "restful-web-api-design-with-node",
+  "version": "1.0.0",
+  "description":
+    "Code was written during reading \"RESTful Web API Design with Node.js\" book (https://www.packtpub.com/web-development/restful-web-api-design-nodejs-second-edition).",
+  "main": "index.js",
+  "scripts": {
+    "watch": "ts-node-dev --fast --respawn src/hello-node-http-server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url":
+      "git+https://github.com/wand3r/restful-web-api-design-with-node.js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url":
+      "https://github.com/wand3r/restful-web-api-design-with-node.js/issues"
+  },
+  "homepage":
+    "https://github.com/wand3r/restful-web-api-design-with-node.js#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.47",
+    "ts-node": "^3.3.0",
+    "ts-node-dev": "^1.0.0-pre.5",
+    "typescript": "^2.6.1",
+    "nodeunit": "^0.11.2"
+  }
+}
