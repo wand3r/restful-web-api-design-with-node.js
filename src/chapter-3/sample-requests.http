@@ -1,0 +1,5 @@
+GET http://localhost:3000/hello/world
+###
+GET http://localhost:3000/hello
+###
+GET http://localhost:3000/hello?name=Andrzej
