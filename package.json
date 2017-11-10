@@ -1,8 +1,7 @@
 {
   "name": "restful-web-api-design-with-node",
   "version": "1.0.0",
-  "description":
-    "Code was written during reading \"RESTful Web API Design with Node.js\" book (https://www.packtpub.com/web-development/restful-web-api-design-nodejs-second-edition).",
+  "description": "Code was written during reading \"RESTful Web API Design with Node.js\" book (https://www.packtpub.com/web-development/restful-web-api-design-nodejs-second-edition).",
   "main": "index.js",
   "scripts": {
     "server-watch": "ts-node-dev --no-notify --respawn src/chapter-3/app.ts",
@@ -10,22 +9,20 @@
   },
   "repository": {
     "type": "git",
-    "url":
-      "git+https://github.com/wand3r/restful-web-api-design-with-node.js.git"
+    "url": "git+https://github.com/wand3r/restful-web-api-design-with-node.js.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url":
-      "https://github.com/wand3r/restful-web-api-design-with-node.js/issues"
+    "url": "https://github.com/wand3r/restful-web-api-design-with-node.js/issues"
   },
-  "homepage":
-    "https://github.com/wand3r/restful-web-api-design-with-node.js#readme",
+  "homepage": "https://github.com/wand3r/restful-web-api-design-with-node.js#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "lodash": "^4.17.4",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.7",
@@ -34,6 +31,7 @@
     "@types/lodash": "^4.14.82",
     "@types/morgan": "^1.7.35",
     "@types/node": "^8.0.47",
+    "@types/xml2js": "^0.4.1",
     "jest": "^21.2.1",
     "ts-jest": "^21.1.4",
     "ts-node": "^3.3.0",

@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as path from "path";
 import * as _ from "lodash";
 
 type Contact = {
@@ -17,20 +18,22 @@ type Contacts = {
   result: Contact[];
 };
 
-const readContacts: () => Contacts = JSON.parse(
-  fs.readFileSync("./data/contacts.json", "utf-8"),
+const readContacts: () => Contacts = _.flow(
+  () => path.join(__dirname, "data", "contacts.json"),
+  filePath => fs.readFileSync(filePath, "utf-8"),
+  fileContent => JSON.parse(fileContent),
 );
 
 export const list: () => Contacts = readContacts;
 
-export const query: (number: string) => Contact | undefined = number =>
+export const query: (number: string) => Contact | null = number =>
   queryByArg("primarycontactnumber", number);
 
 export const queryByArg: <T extends keyof Contact>(
   arg: T,
   value: Contact[T],
-) => Contact | undefined = (arg, value) =>
-  readContacts().result.find(x => x[arg] === value);
+) => Contact | null = (arg, value) =>
+  readContacts().result.find(x => x[arg] === value) || null;
 
 export const listGroups: () => string[] = _.flow(
   () => readContacts().result,

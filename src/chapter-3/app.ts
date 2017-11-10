@@ -3,8 +3,8 @@ import * as core from "express-serve-static-core";
 import * as path from "path";
 import * as logger from "morgan";
 import * as bodyParser from "body-parser";
-
-import * as contacts from "./contacts";
+import * as _ from "lodash";
+import { router as contacts } from "./contacts-router";
 
 export const app = express();
 
@@ -17,13 +17,15 @@ app.get("/hello", (req, res) => {
   else res.end("Hello all");
 });
 
+app.get("/test", (req, res) => {
+  res.json(req.query);
+});
+
 app.get("/hello/:name", (req, res) => {
   res.send(`hello ${req.params.name}`);
 });
 
-app.get("/contacts", (req, res) => {});
-
-//routing
+app.use(contacts);
 
 //catch 404 and forward to error handler
 app.use((req, res, next) => {

@@ -3,3 +3,18 @@ GET http://localhost:3000/hello/world
 GET http://localhost:3000/hello
 ###
 GET http://localhost:3000/hello?name=Andrzej
+###
+GET http://localhost:3000/contacts
+####
+GET http://localhost:3000/contacts/+359777223344
+###
+GET http://localhost:3000/contacts?firstname=Joe
+###
+GET http://localhost:3000/groups
+Accept: text/xml
+###
+GET http://localhost:3000/groups/Dev
+###
+GET http://localhost:3000/groups/Family
+###
+GET http://localhost:3000/test?a=1&a=2&b[c]=foo
