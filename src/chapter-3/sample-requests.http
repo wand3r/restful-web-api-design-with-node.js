@@ -18,3 +18,4 @@ GET http://localhost:3000/groups/Dev
 GET http://localhost:3000/groups/Family
 ###
 GET http://localhost:3000/test?a=1&a=2&b[c]=foo
+###

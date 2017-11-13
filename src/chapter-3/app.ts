@@ -5,12 +5,14 @@ import * as logger from "morgan";
 import * as bodyParser from "body-parser";
 import * as _ from "lodash";
 import { router as contacts } from "./contacts-router";
+import * as cors from "cors";
 
 export const app = express();
 
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors());
 
 app.get("/hello", (req, res) => {
   if ("name" in req.query) res.end(`Hello ${req.query.name}`);
@@ -56,6 +58,6 @@ app.use(((error: Error, req, res, next) => {
 
 const port = 3000;
 
-app.listen(port, () => {
+app.listen(port, "localhost", () => {
   console.log(`Server started at port ${port}`);
 });
