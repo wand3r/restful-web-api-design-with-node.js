@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as _ from "lodash";
 
-type Contact = {
+export type Contact = {
   firstname: string;
   lastname: string;
   title: string;
@@ -18,7 +18,7 @@ type Contacts = {
   result: Contact[];
 };
 
-const readContacts: () => Contacts = _.flow(
+export const readContacts: () => Contacts = _.flow(
   () => path.join(__dirname, "data", "contacts.json"),
   filePath => fs.readFileSync(filePath, "utf-8"),
   fileContent => JSON.parse(fileContent),
