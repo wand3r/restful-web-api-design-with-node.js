@@ -1,8 +1,9 @@
-GET http://localhost:3000/contacts/+123412
-####
-GET http://localhost:3000/contacts/+359777223344
-###
-PUT http://localhost:3000/contacts/+359777223344 HTTP/1.1
+#### not existing contact
+GET http://localhost:3000/api/v1/contacts/+123412
+#### existing contact
+GET http://localhost:3000/api/v1/contacts/+359777223344
+### create / update contact
+PUT http://localhost:3000/api/v1/contacts/+359777223344 HTTP/1.1
 Content-Type: application/json
 
 {
@@ -17,13 +18,14 @@ Content-Type: application/json
   "emailaddresses": ["j.douglas@xyz.com"],
   "groups": ["Dev"]
 }
-###
-DELETE http://localhost:3000/contacts/+359777223344 HTTP/1.1
+### remove contact
+DELETE http://localhost:3000/api/v1/contacts/+359777223344 HTTP/1.1
+### get all contacts in batch
+GET http://localhost:3000/api/v1/contacts?mode=batch HTTP/1.1
+####
+GET http://localhost:3000/api/v1/contacts?mode=stream HTTP/1.1
 ####
 GET http://localhost:3000/wrong/route
 ####
 GET http://localhost:3000/error HTTP/1.1
 ####
-GET http://localhost:3000/contacts HTTP/1.1
-####
-GET http://localhost:3000/contacts-stream HTTP/1.1
