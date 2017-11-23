@@ -1,23 +1,28 @@
 {
   "name": "restful-web-api-design-with-node",
   "version": "1.0.0",
-  "description": "Code was written during reading \"RESTful Web API Design with Node.js\" book (https://www.packtpub.com/web-development/restful-web-api-design-nodejs-second-edition).",
+  "description":
+    "Code was written during reading \"RESTful Web API Design with Node.js\" book (https://www.packtpub.com/web-development/restful-web-api-design-nodejs-second-edition).",
   "main": "index.js",
   "scripts": {
-    "server-watch": "ts-node-dev --no-notify --respawn src/chapter-4/server.ts",
-    "test-watch": "jest --config jest.config.json --watch",
+    "server-watch":
+      "ts-node-dev --inspect=9228 --no-notify --respawn src/chapter-4/server.ts",
+    "test-watch": "jest --config jest.config.js --watch",
     "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wand3r/restful-web-api-design-with-node.js.git"
+    "url":
+      "git+https://github.com/wand3r/restful-web-api-design-with-node.js.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/wand3r/restful-web-api-design-with-node.js/issues"
+    "url":
+      "https://github.com/wand3r/restful-web-api-design-with-node.js/issues"
   },
-  "homepage": "https://github.com/wand3r/restful-web-api-design-with-node.js#readme",
+  "homepage":
+    "https://github.com/wand3r/restful-web-api-design-with-node.js#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
