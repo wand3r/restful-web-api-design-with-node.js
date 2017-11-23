@@ -24,11 +24,8 @@ export const insertOrReplace = (
   db: mongodb.Db,
   primarycontactnumber: string,
   contact: Contact,
-): Promise<"inserted" | "replaced"> => {
-  if (primarycontactnumber !== contact.primarycontactnumber)
-    return Promise.reject("primarycontactnumber conflict");
-
-  return db
+): Promise<"inserted" | "replaced"> =>
+  db
     .collection<Contact>(contactsCollection)
     .replaceOne({ primarycontactnumber }, contact, {
       upsert: true,
@@ -39,7 +36,6 @@ export const insertOrReplace = (
       else throw Error();
     })
     .catch(err => Promise.reject("insertOrReplace internal error"));
-};
 
 export const remove = (
   db: mongodb.Db,
