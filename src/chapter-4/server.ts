@@ -2,21 +2,38 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as logger from "morgan";
 import { apiV1 } from "./contacts-api-v1";
+import { apiV2 } from "./contacts-api-v2";
+import { connect, Db } from "mongodb";
+import { mongoDbUri } from "./config";
 
-const server = express();
+const startServer = (defaultPort: number, defaultHost: string) =>
+  new Promise<express.Express>((resolve, reject) => {
+    const server = express();
 
-server.set("port", process.env.PORT || 3000);
-server.set("host", process.env.HOST || "localhost");
+    server.set("port", process.env.PORT || defaultPort);
+    server.set("host", process.env.HOST || defaultHost);
 
-server.use(logger("dev"));
-server.use(bodyParser.json());
+    server.use(logger("dev"));
+    server.use(bodyParser.json());
+    server.listen(server.get("port"), server.get("host"), () =>
+      resolve(server),
+    );
+  });
 
-server.use("/api/v1/contacts", apiV1());
+const formatServerInfo = (server: express.Express) =>
+  `Server started at ${server.get("host")}:${server.get("port")}`;
 
-server.get("/error", (req, res) => {
-  throw new Error("Error Message");
-});
+Promise.all([startServer(3000, "localhost"), connect(mongoDbUri)])
+  .then(([server, db]) => {
+    console.log(formatServerInfo(server));
 
-server.listen(server.get("port"), server.get("host"), () => {
-  console.log(`Server started at ${server.get("host")}:${server.get("port")}`);
-});
+    server.use("/api/v1/contacts", apiV1());
+    server.use("/api/v2/contacts", apiV2(db));
+    server.get("/error", (req, res) => {
+      throw new Error("Error Message");
+    });
+  })
+  .catch(err => {
+    console.log("Error on server start up");
+    console.error(err);
+  });

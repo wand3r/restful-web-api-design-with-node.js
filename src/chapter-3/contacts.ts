@@ -11,6 +11,7 @@ export type Contact = {
   primarycontactnumber: string;
   othercontactnumbers: string[];
   primaryemailaddress: string;
+  emailaddresses: string[];
   groups: string[];
 };
 
