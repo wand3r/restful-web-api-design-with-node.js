@@ -29,6 +29,10 @@ Promise.all([startServer(3000, "localhost"), connect(mongoDbUri)])
 
     server.use("/api/v1/contacts", apiV1());
     server.use("/api/v2/contacts", apiV2(db));
+    server.use("/api/contacts", apiV2(db));
+    server.use("/redirect", (req, res) => {
+      res.redirect("/api/contacts");
+    });
     server.get("/error", (req, res) => {
       throw new Error("Error Message");
     });

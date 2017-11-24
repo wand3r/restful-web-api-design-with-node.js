@@ -86,3 +86,22 @@ test("Find all contacts", () => {
       expect(_contacts.map(x => omit(x, "_id"))).toEqual([contact, contact2]),
     );
 });
+
+test("Find by args contacts", () => {
+  expect.assertions(1);
+  const contact2 = {
+    ...contact,
+    primarycontactnumber: "+359777223346",
+    groups: [],
+  };
+  const contact3 = { ...contact, primarycontactnumber: "+359777223345" };
+  return Promise.all(
+    [contact, contact2, contact3].map(x =>
+      insertOrReplace(db, x.primarycontactnumber, x),
+    ),
+  )
+    .then(result => contacts.findByArg(db, "groups", "Dev"))
+    .then(_contacts =>
+      expect(_contacts.map(x => omit(x, "_id"))).toEqual([contact, contact3]),
+    );
+});

@@ -13,6 +13,17 @@ export const findByNumber = (
     .findOne({ primarycontactnumber })
     .catch(x => Promise.reject(Error("findByNumber internal error")));
 
+export const findByArg = (
+  db: mongodb.Db,
+  key: keyof Contact,
+  value: any,
+): Promise<Contact[]> =>
+  db
+    .collection<Contact>(contactsCollection)
+    .find({ [key]: value })
+    .toArray()
+    .catch(err => Promise.reject("findByArgs internal error"));
+
 export const findAll = (db: mongodb.Db) =>
   db
     .collection<Contact>(contactsCollection)

@@ -3,7 +3,7 @@ GET http://localhost:3000/api/v2/contacts/+123412
 #### existing contact
 GET http://localhost:3000/api/v2/contacts/+359777223344
 ### create / update contact
-PUT http://localhost:3000/api/v2/contacts/+359777223344 HTTP/1.1
+PUT http://localhost:3000/api/v2/contacts/+359777223345 HTTP/1.1
 Content-Type: application/json
 
 {
@@ -22,3 +22,7 @@ Content-Type: application/json
 DELETE http://localhost:3000/api/v2/contacts/+359777223344 HTTP/1.1
 ### get all contacts in batch
 GET http://localhost:3000/api/v2/contacts HTTP/1.1
+### query contacts in batch
+GET http://localhost:3000/api/v2/contacts?groups=Dev HTTP/1.1
+###
+GET http://localhost:3000/redirect HTTP/1.1
