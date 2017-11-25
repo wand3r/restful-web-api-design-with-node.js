@@ -5,8 +5,6 @@ import { mongoDbUri } from "./config";
 import { Stream } from "stream";
 import * as fs from "fs";
 import * as path from "path";
-import { ObjectID } from "bson";
-import { connect, MongoError } from "mongodb";
 
 const contactsCollection = "contacts";
 
@@ -30,12 +28,39 @@ export const findByArg = (
     .toArray()
     .catch(err => Promise.reject("findByArgs internal error"));
 
-export const findAll = (db: mongodb.Db) =>
-  db
-    .collection<Contact>(contactsCollection)
-    .find({})
-    .toArray()
-    .catch(err => Promise.reject(Error("findAll internal error")));
+export class InvalidPagingParameter extends Error {}
+export type PagedResult<T> = {
+  pageCount: number;
+  page: number;
+  limit: number;
+  result: T[];
+};
+export const findAll = (
+  db: mongodb.Db,
+  { limit = 10, page = 1 } = {},
+): Promise<PagedResult<Contact>> => {
+  const maxLimit = 100;
+  if (limit <= 0 || limit > maxLimit || page < 1)
+    return Promise.reject(new InvalidPagingParameter());
+  const cursor = db.collection<Contact>(contactsCollection).find({});
+  return Promise.all([
+    cursor.count(),
+    cursor
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ _id: 1 })
+      .toArray(),
+  ]).then(([totalItemsCount, items]) => {
+    const pageCount = Math.ceil(totalItemsCount / limit);
+    if (page > pageCount) return Promise.reject(new InvalidPagingParameter());
+    return Promise.resolve({
+      pageCount,
+      page,
+      limit,
+      result: items,
+    });
+  });
+};
 
 export const insertOrReplace = (
   db: mongodb.Db,

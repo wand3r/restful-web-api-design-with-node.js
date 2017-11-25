@@ -21,7 +21,7 @@ Content-Type: application/json
 ### remove contact
 DELETE http://localhost:3000/api/v2/contacts/+359777223344 HTTP/1.1
 ### get all contacts in batch
-GET http://localhost:3000/api/v2/contacts HTTP/1.1
+GET http://localhost:3000/api/v2/contacts?page=50 HTTP/1.1
 ### query contacts in batch
 GET http://localhost:3000/api/v2/contacts?groups=Dev HTTP/1.1
 ###

@@ -2,11 +2,11 @@ import { connect, Db } from "mongodb";
 import { mongoDbUri } from "./config";
 import * as contacts from "./contacts-mongodb-repository";
 import { Contact } from "../chapter-3/contacts";
-import { tryCatch, insert } from "ramda";
 import { insertOrReplace } from "./contacts-mongodb-repository";
-import { omit } from "lodash";
+import { range, omit } from "lodash";
 
 let db: Db = undefined;
+const contactsCollection = "contacts-test";
 const contact: Contact = {
   firstname: "Johnr",
   lastname: "Douglas",
@@ -21,7 +21,7 @@ const contact: Contact = {
 };
 
 beforeAll(() =>
-  connect(mongoDbUri).then(_db => {
+  connect("mongodb://localhost/contacts-test").then(_db => {
     db = _db;
   }),
 );
@@ -75,16 +75,23 @@ test("Find existing contact", () => {
 
 test("Find all contacts", () => {
   expect.assertions(1);
-  const contact2 = { ...contact, primarycontactnumber: "+359777223345" };
-  return contacts
-    .insertOrReplace(db, contact.primarycontactnumber, contact)
-    .then(result =>
-      insertOrReplace(db, contact2.primarycontactnumber, contact2),
-    )
-    .then(result => contacts.findAll(db))
-    .then(_contacts =>
-      expect(_contacts.map(x => omit(x, "_id"))).toEqual([contact, contact2]),
-    );
+  const sampleContacts = range(100).map(x => ({
+    ...contact,
+    primarycontactnumber: `+${x}`,
+    _id: x,
+  }));
+  return db
+    .collection("contacts")
+    .insertMany(sampleContacts)
+    .then(result => contacts.findAll(db, { limit: 10, page: 4 }))
+    .then(_contacts => {
+      expect(_contacts).toEqual({
+        pageCount: 10,
+        page: 4,
+        limit: 10,
+        result: sampleContacts.slice(30, 40),
+      });
+    });
 });
 
 test("Find by args contacts", () => {
@@ -92,7 +99,7 @@ test("Find by args contacts", () => {
   const contact2 = {
     ...contact,
     primarycontactnumber: "+359777223346",
-    groups: [],
+    groups: <any>[],
   };
   const contact3 = { ...contact, primarycontactnumber: "+359777223345" };
   return Promise.all(

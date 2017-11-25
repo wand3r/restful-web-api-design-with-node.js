@@ -9,30 +9,34 @@ import {
   updateImage,
   getImage,
   removeImage,
+  InvalidPagingParameter,
 } from "./contacts-mongodb-repository";
 import { CombineLatestSubscriber } from "rxjs/operators/combineLatest";
 import { options } from "../utils";
 import { contactsDb } from "./contacts-leveldb-repository";
-import { request } from "https";
 
 export const apiV2 = (db: Db) => {
   const apiV2 = express.Router();
 
   apiV2.get("/", (req, res) => {
     const queryKeys = Object.keys(req.query);
-
-    const result =
-      queryKeys.length === 0
-        ? findAll(db)
-        : queryKeys.length === 1
-          ? findByArg(db, <any>queryKeys[0], req.query[queryKeys[0]])
-          : Promise.reject("invalid-query");
+    //prettier-ignore
+    const result: Promise<any> =
+      queryKeys.length === 0 ? 
+        findAll(db) : 
+      queryKeys.includes("limit") || queryKeys.includes("page") ? 
+        findAll(db, { limit: req.query.limit && parseInt(req.query.limit), page: req.query.page && parseInt(req.query.page) }) : 
+      queryKeys.length === 1 ? 
+        findByArg(db, <any>queryKeys[0], req.query[queryKeys[0]]) : 
+      Promise.reject("invalid-query");
 
     result
       .then(contacts => res.json(contacts))
       .catch(
         err =>
-          err === "invalid-query" ? res.sendStatus(400) : res.sendStatus(500),
+          err === "invalid-query" || err instanceof InvalidPagingParameter
+            ? res.sendStatus(400)
+            : res.sendStatus(500),
       );
   });
 
@@ -43,7 +47,7 @@ export const apiV2 = (db: Db) => {
         .then(contact => (contact ? res.json(contact) : res.sendStatus(404)))
         .catch(err => res.sendStatus(500)),
     )
-    .put((req, res) =>
+    .put((req, res) => {
       insertOrReplace(db, req.params.number, req.body)
         .then(result =>
           options(result, {
@@ -51,8 +55,8 @@ export const apiV2 = (db: Db) => {
             replaced: () => res.sendStatus(200),
           }),
         )
-        .catch(err => res.sendStatus(500)),
-    )
+        .catch(err => res.sendStatus(500));
+    })
     .delete((req, res) =>
       remove(db, req.params.number)
         .then(result =>
