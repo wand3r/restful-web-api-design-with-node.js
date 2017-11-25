@@ -6,13 +6,35 @@ import {
   remove,
   findAll,
   findByArg,
+  updateImage,
+  getImage,
+  removeImage,
 } from "./contacts-mongodb-repository";
 import { CombineLatestSubscriber } from "rxjs/operators/combineLatest";
 import { options } from "../utils";
 import { contactsDb } from "./contacts-leveldb-repository";
+import { request } from "https";
 
 export const apiV2 = (db: Db) => {
   const apiV2 = express.Router();
+
+  apiV2.get("/", (req, res) => {
+    const queryKeys = Object.keys(req.query);
+
+    const result =
+      queryKeys.length === 0
+        ? findAll(db)
+        : queryKeys.length === 1
+          ? findByArg(db, <any>queryKeys[0], req.query[queryKeys[0]])
+          : Promise.reject("invalid-query");
+
+    result
+      .then(contacts => res.json(contacts))
+      .catch(
+        err =>
+          err === "invalid-query" ? res.sendStatus(400) : res.sendStatus(500),
+      );
+  });
 
   apiV2
     .route("/:number")
@@ -42,23 +64,31 @@ export const apiV2 = (db: Db) => {
         .catch(err => res.sendStatus(500)),
     );
 
-  apiV2.get("/", (req, res) => {
-    const queryKeys = Object.keys(req.query);
-
-    const result =
-      queryKeys.length === 0
-        ? findAll(db)
-        : queryKeys.length === 1
-          ? findByArg(db, <any>queryKeys[0], req.query[queryKeys[0]])
-          : Promise.reject("invalid-query");
-
-    result
-      .then(contacts => res.json(contacts))
-      .catch(
-        err =>
-          err === "invalid-query" ? res.sendStatus(400) : res.sendStatus(500),
-      );
-  });
+  apiV2
+    .route("/:number/image")
+    .get((req, res) =>
+      getImage(db, req.params.number)
+        .then(imgStream => {
+          if (imgStream === undefined) {
+            res.sendStatus(404);
+            return;
+          }
+          res.setHeader("Content-Type", "image/jpeg");
+          imgStream.on("error", () => res.sendStatus(500));
+          imgStream.pipe(res);
+        })
+        .catch(err => res.sendStatus(500)),
+    )
+    .put((req, res) =>
+      updateImage(db, req.params.number, req)
+        .then(() => res.sendStatus(200))
+        .catch(err => res.sendStatus(500)),
+    )
+    .delete((req, res) =>
+      removeImage(db, req.params.number)
+        .then(x => res.sendStatus(200))
+        .catch(err => res.sendStatus(500)),
+    );
 
   return apiV2;
 };
