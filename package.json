@@ -4,7 +4,7 @@
   "description": "Code was written during reading \"RESTful Web API Design with Node.js\" book (https://www.packtpub.com/web-development/restful-web-api-design-nodejs-second-edition).",
   "main": "index.js",
   "scripts": {
-    "server-watch": "ts-node-dev --inspect=9228 --no-notify --respawn src/chapter-4/server.ts",
+    "server-watch": "ts-node-dev --inspect=9228 --no-notify --respawn src/chapter-4-5/server.ts",
     "test-watch": "jest --config jest.config.js --watch",
     "test": "jest"
   },

@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as logger from "morgan";
+import * as cors from "cors";
 import { apiV1 } from "./contacts-api-v1";
 import { apiV2 } from "./contacts-api-v2";
 import { connect, Db } from "mongodb";
@@ -15,6 +16,7 @@ const startServer = (defaultPort: number, defaultHost: string) =>
 
     server.use(logger("dev"));
     server.use(bodyParser.json());
+    server.use(cors());
     server.listen(server.get("port"), server.get("host"), () =>
       resolve(server),
     );

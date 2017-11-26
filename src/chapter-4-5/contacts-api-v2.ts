@@ -14,11 +14,12 @@ import {
 import { CombineLatestSubscriber } from "rxjs/operators/combineLatest";
 import { options } from "../utils";
 import { contactsDb } from "./contacts-leveldb-repository";
+import { cache } from "./cacheMiddleware";
 
 export const apiV2 = (db: Db) => {
   const apiV2 = express.Router();
 
-  apiV2.get("/", (req, res) => {
+  apiV2.get("/", cache(10), (req, res) => {
     const queryKeys = Object.keys(req.query);
     //prettier-ignore
     const result: Promise<any> =
