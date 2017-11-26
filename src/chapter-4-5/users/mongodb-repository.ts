@@ -1,10 +1,12 @@
 import { Db } from "mongodb";
-import { User, UserExist } from "./model";
+import { User, UserExist, FindUser } from "./model";
 
-const usersCollection = "users";
+const usersCollection = (db: Db) => db.collection<User>("users");
 
 export const userExist: (db: Db) => UserExist = db => (name, password) =>
-  db
-    .collection<User>(usersCollection)
+  usersCollection(db)
     .findOne({ name, password })
     .then(contact => contact !== null);
+
+export const findUser: (db: Db) => FindUser = db => name =>
+  usersCollection(db).findOne({ name });
