@@ -6,6 +6,8 @@ import { apiV1 } from "./contacts-api-v1";
 import { apiV2 } from "./contacts-api-v2";
 import { connect, Db } from "mongodb";
 import { mongoDbUri } from "./config";
+import { basicAuth } from "./basicAuthMiddleware";
+import { userExist } from "./users";
 
 const startServer = (defaultPort: number, defaultHost: string) =>
   new Promise<express.Express>((resolve, reject) => {
@@ -14,9 +16,6 @@ const startServer = (defaultPort: number, defaultHost: string) =>
     server.set("port", process.env.PORT || defaultPort);
     server.set("host", process.env.HOST || defaultHost);
 
-    server.use(logger("dev"));
-    server.use(bodyParser.json());
-    server.use(cors());
     server.listen(server.get("port"), server.get("host"), () =>
       resolve(server),
     );
@@ -28,6 +27,11 @@ const formatServerInfo = (server: express.Express) =>
 Promise.all([startServer(3000, "localhost"), connect(mongoDbUri)])
   .then(([server, db]) => {
     console.log(formatServerInfo(server));
+
+    server.use(logger("dev"));
+    server.use(bodyParser.json());
+    server.use(cors());
+    server.use(basicAuth(userExist(db)));
 
     server.use("/api/v1/contacts", apiV1());
     server.use("/api/v2/contacts", apiV2(db));

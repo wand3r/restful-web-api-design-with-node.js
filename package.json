@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/wand3r/restful-web-api-design-with-node.js#readme",
   "dependencies": {
+    "basic-auth": "^2.0.0",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "encoding-down": "^3.0.0",
@@ -35,6 +36,7 @@
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
+    "@types/basic-auth": "^1.1.2",
     "@types/body-parser": "^1.16.7",
     "@types/cors": "^2.8.2",
     "@types/errorhandler": "0.0.32",

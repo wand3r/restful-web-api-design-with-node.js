@@ -1,9 +1,12 @@
 #### not existing contact
 GET http://localhost:3000/api/v2/contacts/+123412
+Authorization: Basic YWRtaW46YWRtaW4=    
 #### existing contact
 GET http://localhost:3000/api/v2/contacts/+359777223344
+Authorization: Basic YWRtaW46YWRtaW4=    
 ### create / update contact
 PUT http://localhost:3000/api/v2/contacts/+9999999999999 HTTP/1.1
+Authorization: Basic YWRtaW46YWRtaW4=    
 Content-Type: application/json
 
 {
@@ -20,18 +23,30 @@ Content-Type: application/json
 }
 ### remove contact
 DELETE http://localhost:3000/api/v2/contacts/+9999999999999 HTTP/1.1
+Authorization: Basic YWRtaW46YWRtaW4=    
+
 ### get all contacts in batch
 GET http://localhost:3000/api/v2/contacts?page=50 HTTP/1.1
+Authorization: Basic YWRtaW46YWRtaW4=    
+
 ### query contacts in batch
 GET http://localhost:3000/api/v2/contacts?groups=Dev HTTP/1.1
+Authorization: Basic YWRtaW46YWRtaW4=    
+
 ###
 GET http://localhost:3000/redirect HTTP/1.1
+Authorization: Basic YWRtaW46YWRtaW4=    
+
 
 ### get image
 GET http://localhost:3000/api/v2/contacts/+12345/image HTTP/1.1
+Authorization: Basic YWRtaW46YWRtaW4=    
+
 ### send image
 PUT http://localhost:3000/api/v2/contacts/+12345/image HTTP/1.1
+Authorization: Basic YWRtaW46YWRtaW4=    
 
 < ./IMG_20161223_125428585.jpg
 ### delete image
 DELETE http://localhost:3000/api/v2/contacts/+12345/image HTTP/1.1
+Authorization: Basic YWRtaW46YWRtaW4=    
