@@ -1,0 +1,25 @@
+POST http://localhost:3000/api/users
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{ 
+  "name": "Andrzej", 
+  "password": "haslo1234", 
+  "role": "admin" 
+} 
+###
+GET http://localhost:3000/api/users/5a1d92ab9dbd730827e11269
+Authorization: Basic QW5kcnplajpoYXNsbzEyMzQ=
+###
+DELETE  http://localhost:3000/api/users/5a1d93dde4fe230ad61c9019
+Authorization: Basic YWRtaW46YWRtaW4=
+###
+put http://localhost:3000/api/users/5a1d92ab9dbd730827e11269
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{ 
+  "name": "Andrzej", 
+  "password": "haslo1234", 
+  "role": "Admin" 
+} 

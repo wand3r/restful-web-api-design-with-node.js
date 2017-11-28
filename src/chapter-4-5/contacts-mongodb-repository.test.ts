@@ -55,7 +55,7 @@ test("Delete existing contact", () => {
   return contacts
     .insertOrReplace(db, contact.primarycontactnumber, contact)
     .then(result => contacts.remove(db, contact.primarycontactnumber))
-    .then(result => expect(result).toBe("removed"));
+    .then(result => expect(result).toBe("deleted"));
 });
 
 test("Find not existing contact", () => {

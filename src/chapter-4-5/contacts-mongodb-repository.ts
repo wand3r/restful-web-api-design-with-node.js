@@ -5,6 +5,7 @@ import { mongoDbUri } from "./config";
 import { Stream } from "stream";
 import * as fs from "fs";
 import * as path from "path";
+import { DeleteOpResult } from "./globals";
 
 const contactsCollection = "contacts";
 
@@ -82,11 +83,11 @@ export const insertOrReplace = (
 export const remove = (
   db: mongodb.Db,
   primarycontactnumber: string,
-): Promise<"removed" | "not-found"> =>
+): Promise<DeleteOpResult> =>
   db
     .collection<Contact>(contactsCollection)
     .deleteOne({ primarycontactnumber })
-    .then(x => (x.deletedCount === 1 ? "removed" : "not-found"))
+    .then(x => (x.deletedCount === 1 ? "deleted" : "not-found"))
     .catch(err => Promise.reject("remove internal error"));
 
 export const updateImage = (

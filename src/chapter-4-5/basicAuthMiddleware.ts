@@ -1,10 +1,12 @@
 import * as extractCredentialsFromRequest from "basic-auth";
 import { RequestHandler } from "express-serve-static-core";
-import { UserExist } from "./users";
+import { FindUser, verifyPassword } from "./users";
 
-export const basicAuth: (
-  userExist: UserExist,
-) => RequestHandler = userExist => (req, res, next) => {
+export const basicAuth: (findUser: FindUser) => RequestHandler = findUser => (
+  req,
+  res,
+  next,
+) => {
   const credentials = extractCredentialsFromRequest(req);
 
   if (credentials === undefined) {
@@ -13,7 +15,12 @@ export const basicAuth: (
     return;
   }
 
-  userExist(credentials.name, credentials.pass)
-    .then(userExist => (userExist ? next() : res.sendStatus(401)))
+  findUser({ name: credentials.name })
+    .then(
+      user =>
+        user && verifyPassword(user, credentials.pass)
+          ? next()
+          : res.sendStatus(401),
+    )
     .catch(err => next(err));
 };

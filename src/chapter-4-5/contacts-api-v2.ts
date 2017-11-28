@@ -62,7 +62,7 @@ export const apiV2 = (db: Db) => {
       remove(db, req.params.number)
         .then(result =>
           options(result, {
-            removed: () => res.sendStatus(200),
+            deleted: () => res.sendStatus(200),
             "not-found": () => res.sendStatus(200),
           }),
         )

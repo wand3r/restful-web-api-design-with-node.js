@@ -1,24 +1,31 @@
-import { Express } from "express";
+import { Express, RequestHandler } from "express";
 import * as passport from "passport";
 import { OAuth2Strategy as GoogleAuthStrategy } from "passport-google-oauth";
 import { BasicStrategy } from "passport-http";
-import { FindUser, verifyPassword } from "./users";
+import { User, FindUser, verifyPassword, isAuthorized } from "./users";
 
 export const enableBasicAuthentication = (
   server: Express,
   findUser: FindUser,
 ) => {
   const basicStrategy = new BasicStrategy((userName, password, done) =>
-    findUser(userName)
+    findUser({ name: userName })
       .then(user => {
-        if (user === null || !verifyPassword(user, password)) done(null, false);
-        else done(null, user);
+        if (user && verifyPassword(user, password)) done(null, user);
+        else done(null, false);
       })
       .catch(done),
   );
   // server.use(basicAuth(userExist(db)));
   server.use(passport.initialize());
   passport.use(basicStrategy);
+};
+
+export const authorizationMiddleware: (
+  role: string,
+) => RequestHandler = role => (req, res, next) => {
+  if (isAuthorized(<User>req.user, role)) next();
+  else res.sendStatus(403);
 };
 
 export const basicAuthMiddleware = () =>

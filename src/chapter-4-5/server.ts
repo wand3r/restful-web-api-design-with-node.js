@@ -12,10 +12,16 @@ import { apiV2 } from "./contacts-api-v2";
 import { connect, Db } from "mongodb";
 import { mongoDbUri } from "./config";
 import { basicAuth } from "./basicAuthMiddleware";
-import { userExist, findUser, FindUser, verifyPassword } from "./users";
+import {
+  findUser,
+  FindUser,
+  verifyPassword,
+  routes as usersRoutes,
+} from "./users";
 import {
   enableBasicAuthentication as enableAuthentication,
   basicAuthMiddleware as authenticationMiddleware,
+  authorizationMiddleware,
 } from "./authentication";
 
 const startServer = (defaultPort: number, defaultHost: string) =>
@@ -41,6 +47,7 @@ const session = (db: Db) =>
   });
 
 const addRoutes = (server: express.Express, db: Db) => {
+  server.use("/api/users", authorizationMiddleware("Admin"), usersRoutes(db));
   server.use("/api/v1/contacts", apiV1());
   server.use("/api/v2/contacts", apiV2(db));
   server.use(
@@ -48,7 +55,6 @@ const addRoutes = (server: express.Express, db: Db) => {
     (req, res, next) => {
       next();
     },
-    authenticationMiddleware,
     apiV2(db),
   );
   server.use("/redirect", (req, res) => {
@@ -68,11 +74,12 @@ Promise.all([startServer(3000, "localhost"), connect(mongoDbUri)])
     server.use(cors({ origin: "http://localhost:3001", credentials: true }));
     server.use(session(db));
     enableAuthentication(server, findUser(db));
-    server.use((req, res, next) => {
-      console.log(req.session);
-      console.log(req.sessionID);
-      next();
-    });
+    server.use(authenticationMiddleware()),
+      server.use((req, res, next) => {
+        console.log(req.session);
+        console.log(req.sessionID);
+        next();
+      });
     addRoutes(server, db);
   })
   .catch(err => {
