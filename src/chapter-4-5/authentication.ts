@@ -24,7 +24,7 @@ export const enableBasicAuthentication = (
 export const authorizationMiddleware: (
   role: string,
 ) => RequestHandler = role => (req, res, next) => {
-  if (isAuthorized(<User>req.user, role)) next();
+  if (req.user && isAuthorized(<User>req.user, role)) next();
   else res.sendStatus(403);
 };
 

@@ -1,3 +1,6 @@
+import * as https from "https";
+import * as fs from "fs";
+import * as path from "path";
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as logger from "morgan";
@@ -24,15 +27,29 @@ import {
   authorizationMiddleware,
 } from "./authentication";
 
-const startServer = (defaultPort: number, defaultHost: string) =>
+const ssl = () => ({
+  key: fs.readFileSync(path.join(__dirname, "ssl", "key.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "ssl", "server.crt")),
+});
+
+const startServer = (
+  defaultPort: number,
+  defaultHost: string,
+  useHttps: boolean,
+) =>
   new Promise<express.Express>((resolve, reject) => {
     const server = express();
     server.set("port", process.env.PORT || defaultPort);
     server.set("host", process.env.HOST || defaultHost);
 
-    server.listen(server.get("port"), server.get("host"), () =>
-      resolve(server),
-    );
+    if (useHttps)
+      https
+        .createServer(ssl(), server)
+        .listen(server.get("port"), server.get("host"), () => resolve(server));
+    else
+      server.listen(server.get("port"), server.get("host"), () =>
+        resolve(server),
+      );
   });
 
 const formatServerInfo = (server: express.Express): string =>
@@ -65,7 +82,7 @@ const addRoutes = (server: express.Express, db: Db) => {
   });
 };
 
-Promise.all([startServer(3000, "localhost"), connect(mongoDbUri)])
+Promise.all([startServer(3000, "localhost", false), connect(mongoDbUri)])
   .then(([server, db]) => {
     console.log(formatServerInfo(server));
 
