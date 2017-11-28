@@ -3,6 +3,9 @@ import * as bodyParser from "body-parser";
 import * as logger from "morgan";
 import * as cors from "cors";
 import * as passport from "passport";
+import * as expressSession from "express-session";
+import * as mongoSession from "connect-mongo";
+import { OAuth2Strategy as GoogleAuth } from "passport-google-oauth";
 import { BasicStrategy } from "passport-http";
 import { apiV1 } from "./contacts-api-v1";
 import { apiV2 } from "./contacts-api-v2";
@@ -10,11 +13,14 @@ import { connect, Db } from "mongodb";
 import { mongoDbUri } from "./config";
 import { basicAuth } from "./basicAuthMiddleware";
 import { userExist, findUser, FindUser, verifyPassword } from "./users";
+import {
+  enableBasicAuthentication as enableAuthentication,
+  basicAuthMiddleware as authenticationMiddleware,
+} from "./authentication";
 
 const startServer = (defaultPort: number, defaultHost: string) =>
   new Promise<express.Express>((resolve, reject) => {
     const server = express();
-
     server.set("port", process.env.PORT || defaultPort);
     server.set("host", process.env.HOST || defaultHost);
 
@@ -23,34 +29,28 @@ const startServer = (defaultPort: number, defaultHost: string) =>
     );
   });
 
-const formatServerInfo = (server: express.Express) =>
+const formatServerInfo = (server: express.Express): string =>
   `Server started at ${server.get("host")}:${server.get("port")}`;
 
-const addBasicAuthenticationToPassport = (findUser: FindUser) => {
-  passport.use(
-    new BasicStrategy((userName, password, done) =>
-      findUser(userName)
-        .then(user => {
-          if (user === null || !verifyPassword(user, password))
-            done(null, false);
-          else done(null, user);
-        })
-        .catch(err => done(err)),
-    ),
-  );
-};
-
-const addAuthentication = (server: express.Express, db: Db) => {
-  addBasicAuthenticationToPassport(findUser(db));
-  server.use(passport.initialize());
-  server.use(passport.authenticate("basic", { session: false }));
-  // server.use(basicAuth(userExist(db)));
-};
+const session = (db: Db) =>
+  expressSession({
+    store: new (mongoSession(expressSession))({ db }),
+    secret: "session-secret",
+    resave: false,
+    saveUninitialized: true,
+  });
 
 const addRoutes = (server: express.Express, db: Db) => {
   server.use("/api/v1/contacts", apiV1());
   server.use("/api/v2/contacts", apiV2(db));
-  server.use("/api/contacts", apiV2(db));
+  server.use(
+    "/api/contacts",
+    (req, res, next) => {
+      next();
+    },
+    authenticationMiddleware,
+    apiV2(db),
+  );
   server.use("/redirect", (req, res) => {
     res.redirect("/api/contacts");
   });
@@ -65,9 +65,14 @@ Promise.all([startServer(3000, "localhost"), connect(mongoDbUri)])
 
     server.use(logger("dev"));
     server.use(bodyParser.json());
-    server.use(cors());
-
-    addAuthentication(server, db);
+    server.use(cors({ origin: "http://localhost:3001", credentials: true }));
+    server.use(session(db));
+    enableAuthentication(server, findUser(db));
+    server.use((req, res, next) => {
+      console.log(req.session);
+      console.log(req.sessionID);
+      next();
+    });
     addRoutes(server, db);
   })
   .catch(err => {
