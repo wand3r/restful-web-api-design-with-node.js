@@ -1,23 +1,28 @@
 {
   "name": "restful-web-api-design-with-node",
   "version": "1.0.0",
-  "description": "Code was written during reading \"RESTful Web API Design with Node.js\" book (https://www.packtpub.com/web-development/restful-web-api-design-nodejs-second-edition).",
+  "description":
+    "Code was written during reading \"RESTful Web API Design with Node.js\" book (https://www.packtpub.com/web-development/restful-web-api-design-nodejs-second-edition).",
   "main": "index.js",
   "scripts": {
-    "server-watch": "ts-node-dev --inspect=9228 --no-notify --respawn src/chapter-4-5/server.ts",
+    "server-watch":
+      "ts-node-dev --inspect=9228 --no-notify --respawn src/chapter-4-5-6/server.ts",
     "test-watch": "jest --config jest.config.js --watch",
     "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wand3r/restful-web-api-design-with-node.js.git"
+    "url":
+      "git+https://github.com/wand3r/restful-web-api-design-with-node.js.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/wand3r/restful-web-api-design-with-node.js/issues"
+    "url":
+      "https://github.com/wand3r/restful-web-api-design-with-node.js/issues"
   },
-  "homepage": "https://github.com/wand3r/restful-web-api-design-with-node.js#readme",
+  "homepage":
+    "https://github.com/wand3r/restful-web-api-design-with-node.js#readme",
   "dependencies": {
     "@types/passport-google-oauth": "^1.0.36",
     "basic-auth": "^2.0.0",
